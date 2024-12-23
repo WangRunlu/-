@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>秋招投递追踪</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -89,6 +87,8 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
+            display: inline-block;
+            margin-right: 8px;
         }
 
         .progress-steps {
@@ -124,6 +124,12 @@
             color: white;
         }
 
+        .step.rejected .step-circle {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+
         .step-label {
             font-size: 12px;
             color: #666;
@@ -135,10 +141,6 @@
             height: 2px;
             background: #ddd;
             margin: 0 4px;
-        }
-
-        .step.completed .step-line {
-            background: #2ecc71;
         }
 
         .card-footer {
@@ -169,6 +171,7 @@
                 <button class="filter-btn" data-filter="pending">已投递</button>
                 <button class="filter-btn" data-filter="test">笔试完成</button>
                 <button class="filter-btn" data-filter="interview">面试中</button>
+                <button class="filter-btn" data-filter="rejected">被拒</button>
                 <button class="filter-btn" data-filter="complete">已完成</button>
             </div>
         </div>
@@ -178,13 +181,13 @@
     <script>
         const applications = [
             {
-                company: "兴业银行",
-                position: "软件开发工程师",
-                date: "2024-09-01",
+                company: "京东",
+                position: "算法工程师-数据挖掘",
+                date: "2023-12-23",
                 status: "已投递",
                 statusClass: "pending",
                 steps: [
-                    { name: "简历投递", completed: true, date: "2024-09-01" },
+                    { name: "简历投递", completed: true, date: "2023-12-23" },
                     { name: "笔试", completed: false },
                     { name: "一面", completed: false },
                     { name: "二面", completed: false },
@@ -193,14 +196,59 @@
                 ]
             },
             {
-                company: "阿里巴巴",
-                position: "前端开发工程师",
-                date: "2024-09-03",
-                status: "笔试完成",
-                statusClass: "test",
+                company: "兴业银行",
+                position: "管培生-金融科技方向",
+                date: "2023-12-23",
+                status: "已投递",
+                statusClass: "pending",
                 steps: [
-                    { name: "简历投递", completed: true, date: "2024-09-03" },
-                    { name: "笔试", completed: true, date: "2024-09-10" },
+                    { name: "简历投递", completed: true, date: "2023-12-23" },
+                    { name: "笔试", completed: false },
+                    { name: "一面", completed: false },
+                    { name: "二面", completed: false },
+                    { name: "HR面", completed: false },
+                    { name: "Offer", completed: false }
+                ]
+            },
+            {
+                company: "中核同方能源",
+                position: "人工智能研发工程师",
+                date: "2023-12-23",
+                status: "已投递",
+                statusClass: "pending",
+                steps: [
+                    { name: "简历投递", completed: true, date: "2023-12-23" },
+                    { name: "笔试", completed: false },
+                    { name: "一面", completed: false },
+                    { name: "二面", completed: false },
+                    { name: "HR面", completed: false },
+                    { name: "Offer", completed: false }
+                ]
+            },
+            {
+                company: "小米",
+                position: "深度学习规控算法工程师",
+                date: "2023-12-23",
+                status: "已投递",
+                statusClass: "pending",
+                steps: [
+                    { name: "简历投递", completed: true, date: "2023-12-23" },
+                    { name: "笔试", completed: false },
+                    { name: "一面", completed: false },
+                    { name: "二面", completed: false },
+                    { name: "HR面", completed: false },
+                    { name: "Offer", completed: false }
+                ]
+            },
+            {
+                company: "中国电科第六研究所",
+                position: "科研技术研究岗位",
+                date: "2023-12-23",
+                status: "被拒",
+                statusClass: "rejected",
+                steps: [
+                    { name: "简历投递", completed: true, date: "2023-12-23" },
+                    { name: "笔试", completed: false, rejected: true },
                     { name: "一面", completed: false },
                     { name: "二面", completed: false },
                     { name: "HR面", completed: false },
@@ -208,6 +256,17 @@
                 ]
             }
         ];
+
+        function getStatusColor(status) {
+            const colors = {
+                "已投递": "#e3f2fd",
+                "笔试完成": "#f3e5f5",
+                "面试中": "#fff3e0",
+                "已完成": "#e8f5e9",
+                "被拒": "#ffebee"
+            };
+            return colors[status] || '#f5f5f5';
+        }
 
         function renderApplications(filter = 'all') {
             const container = document.getElementById('applications');
@@ -220,8 +279,8 @@
                     card.className = 'card';
                     
                     const stepsHtml = app.steps.map((step, index) => `
-                        <div class="step ${step.completed ? 'completed' : ''}">
-                            <div class="step-circle">${step.completed ? '✓' : index + 1}</div>
+                        <div class="step ${step.completed ? 'completed' : ''} ${step.rejected ? 'rejected' : ''}">
+                            <div class="step-circle">${step.rejected ? '×' : (step.completed ? '✓' : index + 1)}</div>
                             <div class="step-label">${step.name}</div>
                             ${index < app.steps.length - 1 ? '<div class="step-line"></div>' : ''}
                         </div>
@@ -245,17 +304,6 @@
                     
                     container.appendChild(card);
                 });
-        }
-
-        function getStatusColor(status) {
-            const colors = {
-                "已投递": "#e3f2fd",
-                "笔试完成": "#f3e5f5",
-                "面试中": "#fff3e0",
-                "已完成": "#e8f5e9",
-                "已放弃": "#f5f5f5"
-            };
-            return colors[status] || '#f5f5f5';
         }
 
         // 初始化渲染
